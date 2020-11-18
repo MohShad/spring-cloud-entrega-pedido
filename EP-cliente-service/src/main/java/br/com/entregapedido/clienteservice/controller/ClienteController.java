@@ -22,7 +22,7 @@ import javax.validation.Valid;
 
 @RestController
 @Configuration
-@RequestMapping("/api/cliente")
+@RequestMapping("/cliente")
 public class ClienteController {
 
     private static final Logger logger = LoggerFactory.getLogger(ClienteController.class);
