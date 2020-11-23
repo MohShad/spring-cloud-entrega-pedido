@@ -4,8 +4,8 @@ import br.com.entregapedido.clienteservice.ApiResponseDTO;
 import br.com.entregapedido.clienteservice.dto.ClienteRequestDTO;
 import br.com.entregapedido.clienteservice.dto.ClienteResponseDTO;
 import br.com.entregapedido.clienteservice.dto.ClienteResponseSaveDTO;
-import br.com.entregapedido.clienteservice.service.ClienteService;
 import br.com.entregapedido.clienteservice.repository.ClienteRepository;
+import br.com.entregapedido.clienteservice.service.ClienteService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,9 +32,6 @@ public class ClienteController {
 
     @Autowired
     private ClienteService clienteService;
-
-    @Autowired
-    private Environment environment;
 
     @ApiOperation(value = "Cadastro do cliente", produces = "application/json")
     @ApiResponses({
@@ -74,7 +70,6 @@ public class ClienteController {
     public ResponseEntity<ClienteResponseDTO> getClienteByCpf(@PathVariable("cpf") String cpf) {
 
         try {
-            System.out.println(environment.getProperty("token.secret"));
             if (!clienteRepository.existsByCpf(cpf)) {
                 return new ResponseEntity(new ApiResponseDTO(false, "CPF não encontrado."),
                         HttpStatus.BAD_REQUEST);

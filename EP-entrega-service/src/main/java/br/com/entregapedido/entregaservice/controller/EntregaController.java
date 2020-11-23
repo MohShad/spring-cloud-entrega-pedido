@@ -1,8 +1,8 @@
 package br.com.entregapedido.entregaservice.controller;
 
-import br.com.entregapedido.entregaservice.model.Entrega;
 import br.com.entregapedido.entregaservice.ApiResponseDTO;
 import br.com.entregapedido.entregaservice.dto.EntregaResponseDTO;
+import br.com.entregapedido.entregaservice.model.Entrega;
 import br.com.entregapedido.entregaservice.service.EntregaService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/entrega")
+@RequestMapping("/entrega")
 public class EntregaController {
 
     private static final Logger logger = LoggerFactory.getLogger(EntregaController.class);

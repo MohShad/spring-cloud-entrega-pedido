@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/pedido")
+@RequestMapping("/pedido")
 public class PedidoController {
 
     private static final Logger logger = LoggerFactory.getLogger(PedidoController.class);
