@@ -1,11 +1,11 @@
 package br.com.entregapedido.produtoservice.controller;
 
-import br.com.entregapedido.produtoservice.repository.ProdutoRepository;
 import br.com.entregapedido.produtoservice.ApiResponseDTO;
 import br.com.entregapedido.produtoservice.dto.ProdutoRequestDTO;
 import br.com.entregapedido.produtoservice.dto.ProdutoRequestEstoqueDTO;
 import br.com.entregapedido.produtoservice.dto.ProdutoResponseDTO;
 import br.com.entregapedido.produtoservice.dto.ProdutoResponseSaveDTO;
+import br.com.entregapedido.produtoservice.repository.ProdutoRepository;
 import br.com.entregapedido.produtoservice.service.ProdutoService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("api/produto")
+@RequestMapping("/produto")
 public class ProdutoController {
 
     private static final Logger logger = LoggerFactory.getLogger(ProdutoController.class);
@@ -38,7 +38,7 @@ public class ProdutoController {
             @ApiResponse(code = 200, message = "OK.")
     })
     @PostMapping
-    public ResponseEntity<?> registerProduto(@ApiParam(value = "Obejto produto para criar produto em banco de dados.", required = true)@Valid @RequestBody ProdutoRequestDTO produtoRequestDTO) {
+    public ResponseEntity<?> registerProduto(@ApiParam(value = "Obejto produto para criar produto em banco de dados.", required = true) @Valid @RequestBody ProdutoRequestDTO produtoRequestDTO) {
 
         try {
             if (produtoRepository.existsByNcm(produtoRequestDTO.getNcm())) {
