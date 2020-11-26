@@ -7,7 +7,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Objects;
 
 @Entity
 @Table(name = "pedido", schema = "entrega_pedido")
@@ -54,11 +53,11 @@ public class Pedido implements Serializable {
     @GenericGenerator(name = "numero_pedido", strategy = "uuid2")
     private String numeroPedido;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = Cliente.class)
+    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, targetEntity = Cliente.class)
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = Produto.class)
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, targetEntity = Produto.class)
     @JoinColumn(name = "produto_id")
     private Produto produto;
 
@@ -168,45 +167,5 @@ public class Pedido implements Serializable {
 
     public void setProduto(Produto produto) {
         this.produto = produto;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Pedido pedido = (Pedido) o;
-        return Objects.equals(id, pedido.id) &&
-                Objects.equals(createdAt, pedido.createdAt) &&
-                Objects.equals(updatedAt, pedido.updatedAt) &&
-                Objects.equals(dataEntrega, pedido.dataEntrega) &&
-                Objects.equals(descricao, pedido.descricao) &&
-                Objects.equals(valorTotal, pedido.valorTotal) &&
-                Objects.equals(quantidadeProduto, pedido.quantidadeProduto) &&
-                status == pedido.status &&
-                Objects.equals(numeroPedido, pedido.numeroPedido) &&
-                Objects.equals(cliente, pedido.cliente) &&
-                Objects.equals(produto, pedido.produto);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, createdAt, updatedAt, dataEntrega, descricao, valorTotal, quantidadeProduto, status, numeroPedido, cliente, produto);
-    }
-
-    @Override
-    public String toString() {
-        return "Pedido{" +
-                "id=" + id +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", dataEntrega=" + dataEntrega +
-                ", descricao='" + descricao + '\'' +
-                ", valorTotal=" + valorTotal +
-                ", quantidadeProduto=" + quantidadeProduto +
-                ", status=" + status +
-                ", numeroPedido='" + numeroPedido + '\'' +
-                ", cliente=" + cliente +
-                ", produto=" + produto +
-                '}';
     }
 }

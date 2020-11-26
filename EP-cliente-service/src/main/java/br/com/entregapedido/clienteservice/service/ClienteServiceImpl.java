@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class ClienteServiceImpl implements ClienteService {
@@ -50,6 +51,12 @@ public class ClienteServiceImpl implements ClienteService {
         Cliente cliente = clienteRepository.findByCpf(cpf);
         ClienteResponseDTO clienteResponseDTO = new ClienteResponseDTO(cliente.getId(), cliente.getNome(), cliente.getCpf(), cliente.getEndereco(), cliente.getEnderecoEntrega(), cliente.getCep(), cliente.getCidade(), cliente.getEstado(), cliente.getEmail());
         return clienteResponseDTO;
+    }
+
+    @Override
+    public Cliente getClienteById(Long id) {
+        Optional<Cliente> cliente = clienteRepository.findById(id);
+        return cliente.get();
     }
 
 }

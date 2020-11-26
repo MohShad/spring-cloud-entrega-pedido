@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class ProdutoServiceImpl implements ProdutoService {
@@ -64,5 +65,11 @@ public class ProdutoServiceImpl implements ProdutoService {
             logger.error(e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public Produto getProdutoById(Long id) {
+        Optional<Produto> produto = produtoRepository.findById(id);
+        return produto.get();
     }
 }

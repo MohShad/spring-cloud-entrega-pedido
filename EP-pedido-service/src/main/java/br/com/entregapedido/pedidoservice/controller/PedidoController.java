@@ -10,6 +10,7 @@ import br.com.entregapedido.pedidoservice.model.Produto;
 import br.com.entregapedido.pedidoservice.repository.ClienteRepository;
 import br.com.entregapedido.pedidoservice.repository.PedidoRepository;
 import br.com.entregapedido.pedidoservice.repository.ProdutoRepository;
+import br.com.entregapedido.pedidoservice.service.ClienteServiceFeign;
 import br.com.entregapedido.pedidoservice.service.PedidoService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -44,6 +45,9 @@ public class PedidoController {
     @Autowired
     private PedidoRepository pedidoRepository;
 
+    @Autowired
+    private ClienteServiceFeign clienteServiceFeign;
+
     @ApiOperation(value = "Cadastro pedido", produces = "application/json")
     @ApiResponses({
             @ApiResponse(code = 401, message = "Não autorizado"),
@@ -71,8 +75,8 @@ public class PedidoController {
                             HttpStatus.BAD_REQUEST);
                 }
             }
-            Optional<Cliente> cliente = clienteRepository.findById(pedidoRequestDTO.getClienteId());
-            if (!cliente.isPresent()) {
+            Cliente cliente = clienteServiceFeign.getById(pedidoRequestDTO.getClienteId());
+            if (cliente.getId() == null) {
                 return new ResponseEntity(new ApiResponseDTO(false, "Cliente não encontrado!"),
                         HttpStatus.BAD_REQUEST);
             }

@@ -5,6 +5,7 @@ import br.com.entregapedido.produtoservice.dto.ProdutoRequestDTO;
 import br.com.entregapedido.produtoservice.dto.ProdutoRequestEstoqueDTO;
 import br.com.entregapedido.produtoservice.dto.ProdutoResponseDTO;
 import br.com.entregapedido.produtoservice.dto.ProdutoResponseSaveDTO;
+import br.com.entregapedido.produtoservice.model.Produto;
 import br.com.entregapedido.produtoservice.repository.ProdutoRepository;
 import br.com.entregapedido.produtoservice.service.ProdutoService;
 import io.swagger.annotations.ApiOperation;
@@ -103,6 +104,31 @@ public class ProdutoController {
 
             return new ResponseEntity(new ProdutoResponseSaveDTO(true, "Quantidade estoque do produto alterado com sucesso.", id),
                     HttpStatus.OK);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+            return new ResponseEntity(new ApiResponseDTO(false, "Internal error: " + e.getMessage()),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @ApiOperation(value = "Buscar um produto por id", produces = "application/json")
+    @ApiResponses({
+            @ApiResponse(code = 401, message = "Não autorizado"),
+            @ApiResponse(code = 200, message = "OK.")
+    })
+    @GetMapping("/getById/{id}")
+    public ResponseEntity<Produto> getProdutoById(@Valid @PathVariable("id") Long id) {
+
+        try {
+            if (!produtoRepository.existsById(id)) {
+                return new ResponseEntity(new ApiResponseDTO(false, "Produto não encontrado."),
+                        HttpStatus.BAD_REQUEST);
+            }
+            Produto produto = produtoService.getProdutoById(id);
+
+            return new ResponseEntity<Produto>(produto, HttpStatus.OK);
 
         } catch (Exception e) {
             e.printStackTrace();

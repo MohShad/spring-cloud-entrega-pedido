@@ -1,12 +1,12 @@
 package br.com.entregapedido.pedidoservice.service;
 
+import br.com.entregapedido.pedidoservice.dto.*;
 import br.com.entregapedido.pedidoservice.model.Cliente;
 import br.com.entregapedido.pedidoservice.model.Pedido;
 import br.com.entregapedido.pedidoservice.model.Produto;
 import br.com.entregapedido.pedidoservice.repository.ClienteRepository;
 import br.com.entregapedido.pedidoservice.repository.PedidoRepository;
 import br.com.entregapedido.pedidoservice.repository.ProdutoRepository;
-import br.com.entregapedido.pedidoservice.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -42,6 +42,12 @@ public class PedidoServiceImpl implements PedidoService {
     @Autowired
     private MessageSenderServiceImpl messageSenderServiceImpl;
 
+    @Autowired
+    private ClienteServiceFeign clienteServiceFeign;
+
+    @Autowired
+    private ProdutoServiceFeign produtoServiceFeign;
+
     SimpleDateFormat dateFormatData = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
     @Override
@@ -51,11 +57,9 @@ public class PedidoServiceImpl implements PedidoService {
         try {
             String numeroPedido = UUID.randomUUID().toString();
             for (int i = 0; pedidoRequestDTO.getProduto().size() > i; i++) {
-                Optional<Produto> produto = produtoRepository.findById(pedidoRequestDTO.getProduto().get(i).getId());
-                Optional<Cliente> cliente = clienteRepository.findById(pedidoRequestDTO.getClienteId());
+                Produto produto = produtoServiceFeign.getById(pedidoRequestDTO.getProduto().get(i).getId());
+                Cliente cliente = clienteServiceFeign.getById(pedidoRequestDTO.getClienteId());
 
-                Produto pr = produto.get();
-                Cliente cl = cliente.get();
                 Pedido pedido = new Pedido();
 
                 Date createdAt = new Date();
@@ -64,14 +68,14 @@ public class PedidoServiceImpl implements PedidoService {
                 pedido.setDescricao(pedidoRequestDTO.getDescricao());
                 pedido.setNumeroPedido(numeroPedido);
                 pedido.setStatus(ABERTO);
-                Double valorTotal = pr.getPreco() * pedidoRequestDTO.getProduto().get(i).getQuantidade();
+                Double valorTotal = produto.getPreco() * pedidoRequestDTO.getProduto().get(i).getQuantidade();
                 pedido.setValorTotal(valorTotal);
                 pedido.setQuantidadeProduto(pedidoRequestDTO.getProduto().get(i).getQuantidade());
-                pedido.setCliente(cl);
-                pedido.setProduto(pr);
+                pedido.setCliente(cliente);
+                pedido.setProduto(produto);
 
-                pr.setQuantidadeEstoque(pr.getQuantidadeEstoque() - pedidoRequestDTO.getProduto().get(i).getQuantidade());
-                produtoRepository.save(pr);
+                produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - pedidoRequestDTO.getProduto().get(i).getQuantidade());
+                produtoRepository.save(produto);
 
                 pedidoRepository.save(pedido);
             }

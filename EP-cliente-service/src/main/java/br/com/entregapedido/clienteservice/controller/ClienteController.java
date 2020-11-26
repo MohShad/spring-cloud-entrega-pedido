@@ -4,6 +4,7 @@ import br.com.entregapedido.clienteservice.ApiResponseDTO;
 import br.com.entregapedido.clienteservice.dto.ClienteRequestDTO;
 import br.com.entregapedido.clienteservice.dto.ClienteResponseDTO;
 import br.com.entregapedido.clienteservice.dto.ClienteResponseSaveDTO;
+import br.com.entregapedido.clienteservice.model.Cliente;
 import br.com.entregapedido.clienteservice.repository.ClienteRepository;
 import br.com.entregapedido.clienteservice.service.ClienteService;
 import io.swagger.annotations.ApiOperation;
@@ -66,7 +67,7 @@ public class ClienteController {
             @ApiResponse(code = 401, message = "Não autorizado"),
             @ApiResponse(code = 200, message = "OK.")
     })
-    @GetMapping("/{cpf}")
+    @GetMapping("/getByCpf/{cpf}")
     public ResponseEntity<ClienteResponseDTO> getClienteByCpf(@PathVariable("cpf") String cpf) {
 
         try {
@@ -77,6 +78,25 @@ public class ClienteController {
             ClienteResponseDTO clienteResponseDTO = clienteService.getClienteByCpf(cpf);
 
             return new ResponseEntity<ClienteResponseDTO>(clienteResponseDTO, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+            return new ResponseEntity(new ApiResponseDTO(false, "Internal error: " + e.getMessage()),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/getById/{id}")
+    public ResponseEntity<Cliente> getClienteById(@PathVariable("id") Long id) {
+
+        try {
+            if (!clienteRepository.existsById(id)) {
+                return new ResponseEntity(new ApiResponseDTO(false, "Id do cliente não encontrado."),
+                        HttpStatus.BAD_REQUEST);
+            }
+            Cliente cliente = clienteService.getClienteById(id);
+
+            return new ResponseEntity<Cliente>(cliente, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(e.getMessage());
