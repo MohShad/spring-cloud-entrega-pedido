@@ -12,6 +12,7 @@ import br.com.entregapedido.pedidoservice.repository.PedidoRepository;
 import br.com.entregapedido.pedidoservice.repository.ProdutoRepository;
 import br.com.entregapedido.pedidoservice.service.ClienteServiceFeign;
 import br.com.entregapedido.pedidoservice.service.PedidoService;
+import br.com.entregapedido.pedidoservice.service.ProdutoServiceFeign;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -25,19 +26,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/pedido")
 public class PedidoController {
 
     private static final Logger logger = LoggerFactory.getLogger(PedidoController.class);
-
-    @Autowired
-    private ProdutoRepository produtoRepository;
-
-    @Autowired
-    private ClienteRepository clienteRepository;
 
     @Autowired
     private PedidoService pedidoService;
@@ -47,6 +41,9 @@ public class PedidoController {
 
     @Autowired
     private ClienteServiceFeign clienteServiceFeign;
+
+    @Autowired
+    private ProdutoServiceFeign produtoServiceFeign;
 
     @ApiOperation(value = "Cadastro pedido", produces = "application/json")
     @ApiResponses({
@@ -60,9 +57,8 @@ public class PedidoController {
 
         try {
             for (int i = 0; pedidoRequestDTO.getProduto().size() > i; i++) {
-                Optional<Produto> produto = produtoRepository.findById(pedidoRequestDTO.getProduto().get(i).getId());
-                Produto pr = produto.get();
-                if (!produto.isPresent()) {
+                Produto produto = produtoServiceFeign.getById(pedidoRequestDTO.getProduto().get(i).getId());
+                if (produto.getId() == null) {
                     return new ResponseEntity(new ApiResponseDTO(false, "Produto com id " + pedidoRequestDTO.getProduto().get(i).getId() + " não encontrado!"),
                             HttpStatus.BAD_REQUEST);
                 }
@@ -70,8 +66,8 @@ public class PedidoController {
                     return new ResponseEntity(new ApiResponseDTO(false, "Quantidade deve ser maior que 0."),
                             HttpStatus.BAD_REQUEST);
                 }
-                if (pedidoRequestDTO.getProduto().get(i).getQuantidade() > pr.getQuantidadeEstoque()) {
-                    return new ResponseEntity(new ApiResponseDTO(false, "Não temos estoque suficiente! Existem " + pr.getQuantidadeEstoque() + " produto(s) em estoque. Id produto: " + pedidoRequestDTO.getProduto().get(i).getId()),
+                if (pedidoRequestDTO.getProduto().get(i).getQuantidade() > produto.getQuantidadeEstoque()) {
+                    return new ResponseEntity(new ApiResponseDTO(false, "Não temos estoque suficiente! Existem " + produto.getQuantidadeEstoque() + " produto(s) em estoque. Id produto: " + pedidoRequestDTO.getProduto().get(i).getId()),
                             HttpStatus.BAD_REQUEST);
                 }
             }

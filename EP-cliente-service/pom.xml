@@ -67,12 +67,6 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-bus-amqp</artifactId>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>entregapedidodependencies.</groupId>-->
-<!--			<artifactId>entrega-pedido-dependencies</artifactId>-->
-<!--			<version>0.0.1-SNAPSHOT</version>-->
-<!--		</dependency>-->
-		<!-- Junit 5 -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>

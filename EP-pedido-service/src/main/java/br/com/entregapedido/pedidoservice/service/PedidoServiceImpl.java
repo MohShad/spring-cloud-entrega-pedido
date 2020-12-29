@@ -7,6 +7,7 @@ import br.com.entregapedido.pedidoservice.model.Produto;
 import br.com.entregapedido.pedidoservice.repository.ClienteRepository;
 import br.com.entregapedido.pedidoservice.repository.PedidoRepository;
 import br.com.entregapedido.pedidoservice.repository.ProdutoRepository;
+import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -57,8 +58,16 @@ public class PedidoServiceImpl implements PedidoService {
         try {
             String numeroPedido = UUID.randomUUID().toString();
             for (int i = 0; pedidoRequestDTO.getProduto().size() > i; i++) {
-                Produto produto = produtoServiceFeign.getById(pedidoRequestDTO.getProduto().get(i).getId());
-                Cliente cliente = clienteServiceFeign.getById(pedidoRequestDTO.getClienteId());
+
+                Produto produto = null;
+                Cliente cliente = null;
+
+                try {
+                    cliente = clienteServiceFeign.getById(pedidoRequestDTO.getClienteId());
+                    produto = produtoServiceFeign.getById(pedidoRequestDTO.getProduto().get(i).getId());
+                } catch (FeignException e) {
+                    logger.error(e.getLocalizedMessage());
+                }
 
                 Pedido pedido = new Pedido();
 
