@@ -38,10 +38,25 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers(environment.getProperty("api.entrega.getAll.path")).permitAll()
                 .antMatchers(environment.getProperty("api.entrega.actuator.path")).permitAll()
                 .antMatchers(environment.getProperty("api.zuul.actuator.path")).permitAll()
+                .antMatchers("/cliente-service/**").permitAll()
+                .antMatchers("/produto-service/**").permitAll()
+                .antMatchers("/pedido-service/**").permitAll()
+                .antMatchers("/entrega-service/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new AuthorizationFilter(authenticationManager(), environment));
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    }
+
+    public void configure(org.springframework.security.config.annotation.web.builders.WebSecurity web) throws Exception {
+        web
+                .ignoring().antMatchers("/v2/api-docs",
+                "/configuration/ui",
+                "/swagger-resources/**",
+                "/configuration/security",
+                "/swagger-ui.html/**",
+                "/webjars/**",
+                "/h2-console/**");
     }
 }
